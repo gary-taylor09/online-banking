@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace FakeBankingSystem.Database
+namespace OnlineBakingSystem.Database
 {
     public class User : IdentityUser
     {

@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace FakeBankingSystem.Migrations
+namespace OnlineBakingSystem.Migrations
 {
     /// <inheritdoc />
     public partial class UniqueUserName : Migration

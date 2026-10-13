@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace FakeBankingSystem.Controllers
+namespace OnlineBakingSystem.Controllers
 {
     public class AccountsController : Controller
     {

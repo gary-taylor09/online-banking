@@ -1,5 +1,5 @@
-﻿using FakeBankingSystem.Database;
-using FakeBankingSystem.Options;
+﻿using OnlineBakingSystem.Database;
+using OnlineBakingSystem.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 
-namespace FakeBankingSystem.Controllers
+namespace OnlineBakingSystem.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

@@ -1,4 +1,4 @@
-﻿namespace FakeBankingSystem.Extensions
+﻿namespace OnlineBakingSystem.Extensions
 {
     public static class OpenApiExtenstions
     {

@@ -1,7 +1,7 @@
-﻿using FakeBankingSystem.Database;
+﻿using OnlineBakingSystem.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace FakeBankingSystem.Extensions
+namespace OnlineBakingSystem.Extensions
 {
     public static class MigrationExtensions
     {

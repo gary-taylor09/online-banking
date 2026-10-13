@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace FakeBankingSystem.Database
+namespace OnlineBakingSystem.Database
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {
