@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FakeBankingSystem.Database
+namespace OnlineBakingSystem.Database
 {
     public class Account
     {

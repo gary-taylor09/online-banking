@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace FakeBankingSystem.Migrations
+namespace OnlineBakingSystem.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

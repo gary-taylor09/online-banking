@@ -1,6 +1,6 @@
-using FakeBankingSystem.Database;
-using FakeBankingSystem.Extensions;
-using FakeBankingSystem.Options;
+using OnlineBakingSystem.Database;
+using OnlineBakingSystem.Extensions;
+using OnlineBakingSystem.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

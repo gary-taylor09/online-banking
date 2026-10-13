@@ -1,4 +1,4 @@
-﻿namespace FakeBankingSystem.Options
+﻿namespace OnlineBakingSystem.Options
 {
     public class JWTOptions
     {
