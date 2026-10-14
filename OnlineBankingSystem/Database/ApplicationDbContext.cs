@@ -38,6 +38,10 @@ namespace OnlineBakingSystem.Database
                 b.ToTable("Accounts", "banking");
                 b.Property(a => a.AccountNumber).HasMaxLength(25).IsRequired();
                 b.HasIndex(a => a.AccountNumber).IsUnique();
+                b.HasOne<User>()
+                 .WithMany(u => u.Accounts)
+                 .HasForeignKey(a => a.UserId)
+                 .OnDelete(DeleteBehavior.Restrict);
             });
 
             builder.Entity<Transaction>(b =>
