@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using OnlineBankingSystem.RequestsResponses;
 
 namespace OnlineBakingSystem.Controllers
 {
@@ -19,9 +20,6 @@ namespace OnlineBakingSystem.Controllers
         private readonly SignInManager<User> _loginManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IOptions<JWTOptions> _jwtOptions;
-        public record RegisterUserRecord(string UserName, string Password, string Email, string Role = "User");
-        public record LoginUserRecord (string UserName, string Password);
-        public record UpdateUserPasswordRecord(string UserName, string Password, string NewPassword);
 
         public UsersController(UserManager<User> userManager, SignInManager<User> loginManager, RoleManager<IdentityRole> roleManager, IOptions<JWTOptions> jwtOptions)
         {
@@ -32,7 +30,7 @@ namespace OnlineBakingSystem.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser(RegisterUserRecord user)
+        public async Task<IActionResult> RegisterUser(RegisterUserRequest user)
         {
             if (user is null)
             {
@@ -42,7 +40,7 @@ namespace OnlineBakingSystem.Controllers
             var newUser = new User
             {
                 UserName = user.UserName,
-                Email = user.Email
+                Email = user.Email,
             };
 
             var result = await _userManager.CreateAsync(newUser, user.Password);
@@ -66,53 +64,67 @@ namespace OnlineBakingSystem.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteUser(string userName)
+        public async Task<IActionResult> DeleteUser(DeleteUserRequest request)
         {
-            if (string.IsNullOrEmpty(userName))
+            if (string.IsNullOrEmpty(request.UserName))
             {
                 return BadRequest("Username is required");
             }
 
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(request.UserName);
             if (user is null)
             {
-                return NotFound($"User not found: {userName}");
+                return NotFound($"User not found: {request.UserName}");
             }
 
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, errors = result.Errors.Select(e => e.Description) });
+                return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponse
+                {
+                    Success = false,
+                    Message = $"Failed to delete user: {string.Join(", ", result.Errors.Select(e => e.Description))}"
+                });
             }
 
-            return Ok();
+            return Ok(new DeleteUserResponse
+            {
+                Success = true,
+                Message = "User deleted successfully",
+                UserName = request.UserName
+            });
         }
 
         [HttpPatch("update-password")]
-        public async Task<IActionResult> UpdatePassword(UpdateUserPasswordRecord userRecord) 
+        public async Task<IActionResult> UpdatePassword(UpdateUserPasswordRequest userRequest) 
         { 
             var callerIdentity = User.Identity;
             if(callerIdentity is null || !callerIdentity.IsAuthenticated)
             {
                 return Unauthorized("User is not authenticated");
             }
-            if(callerIdentity.Name != userRecord.UserName && !User.IsInRole("Admin"))
+            if(callerIdentity.Name != userRequest.UserName && !User.IsInRole("Admin"))
             {
                 return Forbid("You are not authorized to change this user's password");
             }
 
-            var currentUser = await _userManager.FindByNameAsync(userRecord.UserName);
+            var currentUser = await _userManager.FindByNameAsync(userRequest.UserName);
             if(currentUser is null)
             {
-                return NotFound($"User not found: {userRecord.UserName}");
+                return NotFound($"User not found: {userRequest.UserName}");
             }
 
-            var result = await _userManager.ChangePasswordAsync(currentUser, userRecord.Password, userRecord.NewPassword);
+            var result = await _userManager.ChangePasswordAsync(currentUser, userRequest.Password, userRequest.NewPassword);
             if (!result.Succeeded)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, errors = result.Errors.Select(e => e.Description) });
             }
-            return Ok();
+            return Ok(new UpdateUserPasswordResponse
+            {
+                Success = true,
+                Message = "Password updated successfully",
+                UserName = userRequest.UserName
+            });
         }
 
         [Authorize(Roles = "Admin, Clerk")]
@@ -148,20 +160,20 @@ namespace OnlineBakingSystem.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(RegisterUserRecord user)
+        public async Task<IActionResult> Login(LoginUserRequest loginRequest)
         {
-            if (user is null)
+            if (loginRequest is null)
             {
                 return BadRequest("Invalid user data");
             }
 
-            var existingUser = await _userManager.FindByEmailAsync(user.Email);
+            var existingUser = await _userManager.FindByNameAsync(loginRequest.UserName);
             if(existingUser is null)
             {
-                return NotFound($"User not found: {user.Email}");
+                return NotFound($"User not found: {loginRequest.UserName}");
             }
-            
-            var loginResult = await _loginManager.PasswordSignInAsync(user.UserName, user.Password, false, false);
+
+            var loginResult = await _loginManager.PasswordSignInAsync(loginRequest.UserName, loginRequest.Password, false, false);
             if (loginResult.IsLockedOut)
             {
                 return Forbid("User account is locked out due to multiple failed login attempts");
@@ -173,7 +185,7 @@ namespace OnlineBakingSystem.Controllers
 
             var roles = await _userManager.GetRolesAsync(existingUser);
             var signingKey = new SymmetricSecurityKey(UTF8Encoding.UTF8.GetBytes(_jwtOptions.Value.SecretKey));
-            var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256); // Real world, probably pick a much stronger algorithm
+            var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
             List<Claim> claims =
             [
@@ -194,16 +206,22 @@ namespace OnlineBakingSystem.Controllers
             var tokenHandler = new JsonWebTokenHandler();
             string accessToken = tokenHandler.CreateToken(tokenDesccriptor);
 
-            return Ok(new { accessToken });
+            return Ok(new LoginUserResponse
+            {
+                Success = true,
+                Message = "Login successful",
+                AccessToken = accessToken,
+                UserName = existingUser.UserName
+            });
         }
 
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout(RegisterUserRecord user)
+        public async Task<IActionResult> Logout(LogoutUserRequest logoutRequest)
         {
-            var logoutUser = await _userManager.FindByNameAsync(user.UserName);
+            var logoutUser = await _userManager.FindByNameAsync(logoutRequest.UserName);
             if (logoutUser is null)
             {
-                return NotFound($"User not found: {user.UserName}");
+                return NotFound($"User not found: {logoutRequest.UserName}");
             }
             if (User.Identity?.Name != logoutUser.UserName && !User.IsInRole("Admin"))
             {
@@ -213,10 +231,15 @@ namespace OnlineBakingSystem.Controllers
             {
                 return Unauthorized("User is not authenticated");
             }
-            await _userManager.UpdateSecurityStampAsync(logoutUser); // Invalidate the user's security stamp to log them out
+            await _userManager.UpdateSecurityStampAsync(logoutUser);
             await _loginManager.SignOutAsync();
 
-            return Ok();
+            return Ok(new LogoutUserResponse
+            {
+                Success = true,
+                Message = "Logout successful",
+                UserName = logoutRequest.UserName
+            });
         }
 
     }

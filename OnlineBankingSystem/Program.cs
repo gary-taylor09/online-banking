@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Experimental;
+using OnlineBankingSystem.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,10 +43,12 @@ builder.Services.AddIdentityCore<User>(options =>
         options.Lockout.AllowedForNewUsers = true;
     })
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddEntityFrameworkStores<AuthDbContext>()
     .AddApiEndpoints();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<AuthDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<BankingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();

@@ -9,11 +9,11 @@ using OnlineBakingSystem.Database;
 
 #nullable disable
 
-namespace OnlineBakingSystem.Migrations
+namespace OnlineBankingSystem.Migrations.Auth
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261014085041_Transactions")]
-    partial class Transactions
+    [DbContext(typeof(AuthDbContext))]
+    [Migration("20261014103155_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,100 +159,6 @@ namespace OnlineBakingSystem.Migrations
                     b.ToTable("AspNetUserTokens", "identity");
                 });
 
-            modelBuilder.Entity("OnlineBakingSystem.Database.Account", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AccountNumber")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("OwnerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountNumber")
-                        .IsUnique();
-
-                    b.HasIndex("OwnerId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Accounts", "banking");
-                });
-
-            modelBuilder.Entity("OnlineBakingSystem.Database.Transaction", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("Timestamp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetimeoffset")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("TransactionTypeID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TypeID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("TransactionTypeID")
-                        .IsUnique();
-
-                    b.HasIndex("TypeID");
-
-                    b.ToTable("Transactions", "banking");
-                });
-
-            modelBuilder.Entity("OnlineBakingSystem.Database.TransactionType", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("TransactionTypes", "banking");
-                });
-
             modelBuilder.Entity("OnlineBakingSystem.Database.User", b =>
                 {
                     b.Property<string>("Id")
@@ -367,56 +273,6 @@ namespace OnlineBakingSystem.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("OnlineBakingSystem.Database.Account", b =>
-                {
-                    b.HasOne("OnlineBakingSystem.Database.User", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineBakingSystem.Database.User", null)
-                        .WithMany("Accounts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("OnlineBakingSystem.Database.Transaction", b =>
-                {
-                    b.HasOne("OnlineBakingSystem.Database.Account", null)
-                        .WithMany("Transactions")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineBakingSystem.Database.TransactionType", null)
-                        .WithOne()
-                        .HasForeignKey("OnlineBakingSystem.Database.Transaction", "TransactionTypeID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OnlineBakingSystem.Database.TransactionType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Type");
-                });
-
-            modelBuilder.Entity("OnlineBakingSystem.Database.Account", b =>
-                {
-                    b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("OnlineBakingSystem.Database.User", b =>
-                {
-                    b.Navigation("Accounts");
                 });
 #pragma warning restore 612, 618
         }

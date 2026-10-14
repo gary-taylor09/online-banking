@@ -14,5 +14,7 @@ namespace OnlineBakingSystem.Database
         public int TransactionTypeID { get; set; }
         [Required]
         public TransactionType Type { get; set; }
+        [Required]
+        public bool Deleted { get; set; } = false;
     }
 }

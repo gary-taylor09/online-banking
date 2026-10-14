@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace OnlineBakingSystem.Migrations
+namespace OnlineBankingSystem.Migrations.Banking
 {
     /// <inheritdoc />
-    public partial class Transactions : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,28 +21,13 @@ namespace OnlineBakingSystem.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     AccountNumber = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Accounts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Accounts_AspNetUsers_OwnerId",
-                        column: x => x.OwnerId,
-                        principalSchema: "identity",
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Accounts_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "identity",
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -107,18 +92,6 @@ namespace OnlineBakingSystem.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Accounts_OwnerId",
-                schema: "banking",
-                table: "Accounts",
-                column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Accounts_UserId",
-                schema: "banking",
-                table: "Accounts",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Transactions_AccountId",
                 schema: "banking",
                 table: "Transactions",
@@ -136,6 +109,17 @@ namespace OnlineBakingSystem.Migrations
                 schema: "banking",
                 table: "Transactions",
                 column: "TypeID");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Account_AspNetUsers_UserId",
+                schema: "banking",
+                table: "Accounts",
+                column: "UserId",
+                principalSchema: "identity",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.NoAction
+                );
         }
 
         /// <inheritdoc />
