@@ -2,24 +2,26 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OnlineBakingSystem.Database;
 using OnlineBankingSystem.Database;
 using OnlineBankingSystem.RequestsResponses;
+using NLog;
 using System.Security.Claims;
 
-namespace OnlineBakingSystem.Controllers
+namespace OnlineBankingSystem.Controllers
 {
     public class AccountsController : Controller
     {
         UserStore<IdentityUser> _userStore;
         RoleStore<IdentityRole> _roleStore;
         BankingDbContext _bankingDb;
+        private readonly NLog.ILogger _logger;
 
         public AccountsController(UserStore<IdentityUser> userStore, RoleStore<IdentityRole> roleStore, BankingDbContext bankingDb)
         {
             _userStore = userStore;
             _roleStore = roleStore;
             _bankingDb = bankingDb;
+            _logger = LogManager.GetCurrentClassLogger();
         }
 
         [HttpGet]
@@ -86,13 +88,16 @@ namespace OnlineBakingSystem.Controllers
                 }
 
                 var account = await _bankingDb.Accounts.FindAsync(request.AccountId);
-                if (account == null)
+                if (account == null || account.Deleted)
                 {
                     return NotFound("Account not found");
                 }
 
                 account.Deleted = true;
                 await _bankingDb.SaveChangesAsync();
+
+                // Log account deletion
+                _logger.Info($"Account Deletion Delete | AccountNumber: {account.AccountNumber} | AccountId: {request.AccountId} | Timestamp: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}");
 
                 return Ok(new DeleteAccountResponse
                 {
@@ -103,6 +108,7 @@ namespace OnlineBakingSystem.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, $"Error | An unhandled error occurred in DeleteAccount: {ex.Message}");
                 return StatusCode(500, new BaseResponse
                 {
                     Success = false,
@@ -110,6 +116,7 @@ namespace OnlineBakingSystem.Controllers
                 });
             }
         }
+        
 
         [HttpPost]
         public async Task<IActionResult> CreateTransaction(CreateTransactionRequest request)
@@ -209,6 +216,7 @@ namespace OnlineBakingSystem.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 return StatusCode(500, new BaseResponse
                 {
                     Success = false,
@@ -263,6 +271,7 @@ namespace OnlineBakingSystem.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 return StatusCode(500, new BaseResponse
                 {
                     Success = false,

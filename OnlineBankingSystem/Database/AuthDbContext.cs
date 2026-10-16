@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace OnlineBakingSystem.Database
+namespace OnlineBankingSystem.Database
 {
     public class AuthDbContext : IdentityDbContext<User>
     {

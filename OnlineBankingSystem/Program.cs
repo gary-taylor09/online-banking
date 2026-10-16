@@ -1,14 +1,28 @@
-using OnlineBakingSystem.Database;
-using OnlineBakingSystem.Extensions;
-using OnlineBakingSystem.Options;
+using OnlineBankingSystem.Database;
+using OnlineBankingSystem.Extensions;
+using OnlineBankingSystem.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Tokens.Experimental;
-using OnlineBankingSystem.Database;
+using NLog;
+using NLog.Web;
+
+// Ensure logging directory exists
+var logDirectory = "C:/ApplicationLogging/OnlineBankingSystem";
+if (!Directory.Exists(logDirectory))
+{
+    Directory.CreateDirectory(logDirectory);
+}
+
+// Setup NLog
+var logger = LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure NLog as the logging provider
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
 
 // Add services to the container.
 
@@ -45,12 +59,11 @@ builder.Services.AddIdentityCore<User>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddApiEndpoints();
-
+ 
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<BankingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -73,8 +86,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapIdentityApi<User>();
 
 await app.SeedRolesAsync();
 

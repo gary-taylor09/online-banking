@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OnlineBakingSystem.Database;
+using OnlineBankingSystem.Database;
 
 #nullable disable
 
@@ -156,7 +156,7 @@ namespace OnlineBankingSystem.Migrations.Auth
                     b.ToTable("AspNetUserTokens", "identity");
                 });
 
-            modelBuilder.Entity("OnlineBakingSystem.Database.User", b =>
+            modelBuilder.Entity("OnlineBankingSystem.Database.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -232,7 +232,7 @@ namespace OnlineBankingSystem.Migrations.Auth
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("OnlineBakingSystem.Database.User", null)
+                    b.HasOne("OnlineBankingSystem.Database.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -241,7 +241,7 @@ namespace OnlineBankingSystem.Migrations.Auth
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("OnlineBakingSystem.Database.User", null)
+                    b.HasOne("OnlineBankingSystem.Database.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -256,7 +256,7 @@ namespace OnlineBankingSystem.Migrations.Auth
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OnlineBakingSystem.Database.User", null)
+                    b.HasOne("OnlineBankingSystem.Database.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -265,7 +265,7 @@ namespace OnlineBankingSystem.Migrations.Auth
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("OnlineBakingSystem.Database.User", null)
+                    b.HasOne("OnlineBankingSystem.Database.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -1,4 +1,4 @@
-﻿namespace OnlineBakingSystem.Extensions
+﻿namespace OnlineBankingSystem.Extensions
 {
     public static class OpenApiExtenstions
     {

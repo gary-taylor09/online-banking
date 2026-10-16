@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnlineBakingSystem.Database;
+using OnlineBankingSystem.Database;
 
 namespace OnlineBankingSystem.Database
 {

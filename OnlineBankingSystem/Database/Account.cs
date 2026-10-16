@@ -1,7 +1,7 @@
 ﻿using OnlineBankingSystem.Database;
 using System.ComponentModel.DataAnnotations;
 
-namespace OnlineBakingSystem.Database
+namespace OnlineBankingSystem.Database
 {
     public class Account
     {

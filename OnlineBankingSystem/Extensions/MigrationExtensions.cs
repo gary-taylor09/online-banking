@@ -1,7 +1,7 @@
-﻿using OnlineBakingSystem.Database;
+﻿using OnlineBankingSystem.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace OnlineBakingSystem.Extensions
+namespace OnlineBankingSystem.Extensions
 {
     public static class MigrationExtensions
     {

@@ -22,7 +22,7 @@ namespace OnlineBankingSystem.Migrations.Banking
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("OnlineBakingSystem.Database.Account", b =>
+            modelBuilder.Entity("OnlineBankingSystem.Database.Account", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,7 +61,7 @@ namespace OnlineBankingSystem.Migrations.Banking
                     b.ToTable("Accounts", "banking");
                 });
 
-            modelBuilder.Entity("OnlineBakingSystem.Database.Transaction", b =>
+            modelBuilder.Entity("OnlineBankingSystem.Database.Transaction", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -106,7 +106,7 @@ namespace OnlineBankingSystem.Migrations.Banking
                     b.ToTable("Transactions", "banking");
                 });
 
-            modelBuilder.Entity("OnlineBakingSystem.Database.TransactionType", b =>
+            modelBuilder.Entity("OnlineBankingSystem.Database.TransactionType", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -142,7 +142,7 @@ namespace OnlineBankingSystem.Migrations.Banking
                     b.ToTable("AccountTypes", "banking");
                 });
 
-            modelBuilder.Entity("OnlineBakingSystem.Database.Account", b =>
+            modelBuilder.Entity("OnlineBankingSystem.Database.Account", b =>
                 {
                     b.HasOne("OnlineBankingSystem.Database.AccountType", "AccountType")
                         .WithMany()
@@ -153,21 +153,21 @@ namespace OnlineBankingSystem.Migrations.Banking
                     b.Navigation("AccountType");
                 });
 
-            modelBuilder.Entity("OnlineBakingSystem.Database.Transaction", b =>
+            modelBuilder.Entity("OnlineBankingSystem.Database.Transaction", b =>
                 {
-                    b.HasOne("OnlineBakingSystem.Database.Account", null)
+                    b.HasOne("OnlineBankingSystem.Database.Account", null)
                         .WithMany("Transactions")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OnlineBakingSystem.Database.TransactionType", null)
+                    b.HasOne("OnlineBankingSystem.Database.TransactionType", null)
                         .WithOne()
-                        .HasForeignKey("OnlineBakingSystem.Database.Transaction", "TransactionTypeID")
+                        .HasForeignKey("OnlineBankingSystem.Database.Transaction", "TransactionTypeID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OnlineBakingSystem.Database.TransactionType", "Type")
+                    b.HasOne("OnlineBankingSystem.Database.TransactionType", "Type")
                         .WithMany()
                         .HasForeignKey("TypeID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -176,7 +176,7 @@ namespace OnlineBankingSystem.Migrations.Banking
                     b.Navigation("Type");
                 });
 
-            modelBuilder.Entity("OnlineBakingSystem.Database.Account", b =>
+            modelBuilder.Entity("OnlineBankingSystem.Database.Account", b =>
                 {
                     b.Navigation("Transactions");
                 });

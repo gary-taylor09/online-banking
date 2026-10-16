@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace OnlineBakingSystem.Extensions
+namespace OnlineBankingSystem.Extensions
 {
     public static class RoleStoreExtension
     {
