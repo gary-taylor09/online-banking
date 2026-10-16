@@ -11,7 +11,8 @@ A sample online baking system:
 ### ASP.NET API Backend
 -EF Identity for user management and authorization  
 -JWT Authentication  
--NLog for logging for system agnostic logging  
+-NLog for logging for system agnostic logging
+-Supports HTTPS
 
 ### TODO: React Front End
 -User admin page  
@@ -22,4 +23,5 @@ A sample online baking system:
 -Audit table for reconciliations  
 -Audit table for transfers  
 -Added encrypted user PII  
--Mock external transfer with routing and account numbers  
+-Mock external transfer with routing and account numbers
+-Get building into a Docker container (currently just running locally)
