@@ -22,7 +22,6 @@ namespace OnlineBankingSystem.Controllers
         private readonly SignInManager<User> _loginManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IOptions<JWTOptions> _jwtOptions;
-        private readonly EventLog _eventLog;
         private readonly NLog.ILogger _logger;
         private const string EventLogSource = "OnlineBankingSystem";
 
@@ -33,21 +32,6 @@ namespace OnlineBankingSystem.Controllers
             _roleManager = roleManager;
             _jwtOptions = jwtOptions;
             _logger = LogManager.GetCurrentClassLogger();
-
-            try
-            {
-                if (!EventLog.SourceExists(EventLogSource))
-                {
-                    EventLog.CreateEventSource(EventLogSource, "Application");
-                }
-                _eventLog = new EventLog("Application");
-                _eventLog.Source = EventLogSource;
-            }
-            catch
-            {
-                // Handle case where event log creation fails (e.g., no elevated permissions)
-                _eventLog = null;
-            }
         }
 
         [HttpPost("register")]
@@ -97,7 +81,6 @@ namespace OnlineBankingSystem.Controllers
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error | An unhandled error occurred in RegisterUser: {ex.Message}");
-                _eventLog?.WriteEntry($"Error in RegisterUser: {ex.Message}\n{ex.StackTrace}", EventLogEntryType.Error);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = "An error occurred. Please try again later." });
             }
         }
@@ -141,8 +124,6 @@ namespace OnlineBankingSystem.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"Error | An unhandled error occurred in DeleteUser: {ex.Message}");
-                _eventLog?.WriteEntry($"Error in DeleteUser: {ex.Message}\n{ex.StackTrace}", EventLogEntryType.Error);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = "An error occurred. Please try again later." });
             }
         }
@@ -183,7 +164,6 @@ namespace OnlineBankingSystem.Controllers
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error | An unhandled error occurred in UpdatePassword: {ex.Message}");
-                _eventLog?.WriteEntry($"Error in UpdatePassword: {ex.Message}\n{ex.StackTrace}", EventLogEntryType.Error);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = "An error occurred. Please try again later." });
             }
         }
@@ -210,7 +190,6 @@ namespace OnlineBankingSystem.Controllers
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error | An unhandled error occurred in GetUser: {ex.Message}");
-                _eventLog?.WriteEntry($"Error in GetUser: {ex.Message}\n{ex.StackTrace}", EventLogEntryType.Error);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = "An error occurred. Please try again later." });
             }
         }
@@ -233,7 +212,6 @@ namespace OnlineBankingSystem.Controllers
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error | An unhandled error occurred in GetAllUsers: {ex.Message}");
-                _eventLog?.WriteEntry($"Error in GetAllUsers: {ex.Message}\n{ex.StackTrace}", EventLogEntryType.Error);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = "An error occurred. Please try again later." });
             }
         }
@@ -298,7 +276,6 @@ namespace OnlineBankingSystem.Controllers
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error | An unhandled error occurred in Login: {ex.Message}");
-                _eventLog?.WriteEntry($"Error in Login: {ex.Message}\n{ex.StackTrace}", EventLogEntryType.Error);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = "An error occurred. Please try again later." });
             }
         }
@@ -334,7 +311,6 @@ namespace OnlineBankingSystem.Controllers
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error | An unhandled error occurred in Logout: {ex.Message}");
-                _eventLog?.WriteEntry($"Error in Logout: {ex.Message}\n{ex.StackTrace}", EventLogEntryType.Error);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = "An error occurred. Please try again later." });
             }
         }
@@ -363,7 +339,6 @@ namespace OnlineBankingSystem.Controllers
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error | An unhandled error occurred in GetCurrentUser: {ex.Message}");
-                _eventLog?.WriteEntry($"Error in GetCurrentUser: {ex.Message}\n{ex.StackTrace}", EventLogEntryType.Error);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = "An error occurred. Please try again later." });
             }
         }
@@ -405,7 +380,6 @@ namespace OnlineBankingSystem.Controllers
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error | An unhandled error occurred in UnlockUser: {ex.Message}");
-                _eventLog?.WriteEntry($"Error in UnlockUser: {ex.Message}\n{ex.StackTrace}", EventLogEntryType.Error);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, error = "An error occurred. Please try again later." });
             }
         }
